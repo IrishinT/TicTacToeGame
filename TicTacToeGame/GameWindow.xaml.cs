@@ -1,24 +1,31 @@
-﻿using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace TicTacToeGame
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Главное окно игры в крестики-нолики.
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class GameWindow : Window
     {
-        public MainWindow()
+        public GameWindow()
         {
             InitializeComponent();
+        }
+
+        private void NewGameButton_Click(object sender, RoutedEventArgs e)
+        {
+            NewGameButton.Content = "Новая игра";
+            StatusText.Text = "Ваш ход";
+            SetBoardEnabled(true);
+        }
+
+        private void SetBoardEnabled(bool isEnabled)
+        {
+            foreach (Button cell in BoardGrid.Children)
+            {
+                cell.IsEnabled = isEnabled;
+            }
         }
     }
 }

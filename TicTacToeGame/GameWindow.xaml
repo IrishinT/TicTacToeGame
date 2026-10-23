@@ -1,12 +1,45 @@
-﻿<Window x:Class="TicTacToeGame.MainWindow"
+<Window x:Class="TicTacToeGame.GameWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TicTacToeGame"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="Крестики-нолики" Height="480" Width="400"
+        MinHeight="420" MinWidth="340">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
+        <TextBlock x:Name="StatusText"
+                   Grid.Row="0"
+                   Margin="0,0,0,12"
+                   HorizontalAlignment="Center"
+                   FontSize="18"
+                   Text="Нажмите «Начать игру»" />
+
+        <UniformGrid x:Name="BoardGrid" Grid.Row="1" Rows="3" Columns="3">
+            <Button x:Name="Cell0" FontSize="48" Margin="4" IsEnabled="False" />
+            <Button x:Name="Cell1" FontSize="48" Margin="4" IsEnabled="False" />
+            <Button x:Name="Cell2" FontSize="48" Margin="4" IsEnabled="False" />
+            <Button x:Name="Cell3" FontSize="48" Margin="4" IsEnabled="False" />
+            <Button x:Name="Cell4" FontSize="48" Margin="4" IsEnabled="False" />
+            <Button x:Name="Cell5" FontSize="48" Margin="4" IsEnabled="False" />
+            <Button x:Name="Cell6" FontSize="48" Margin="4" IsEnabled="False" />
+            <Button x:Name="Cell7" FontSize="48" Margin="4" IsEnabled="False" />
+            <Button x:Name="Cell8" FontSize="48" Margin="4" IsEnabled="False" />
+        </UniformGrid>
+
+        <Button x:Name="NewGameButton"
+                Grid.Row="2"
+                Margin="0,12,0,0"
+                Padding="12,6"
+                HorizontalAlignment="Center"
+                FontSize="16"
+                Content="Начать игру"
+                Click="NewGameButton_Click" />
     </Grid>
 </Window>
