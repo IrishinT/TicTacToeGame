@@ -60,20 +60,29 @@ namespace TicTacToeGame
         }
 
         /// <summary>
-        /// Возвращает победителя или <see cref="Mark.None"/>, если победителя нет.
+        /// Возвращает индексы клеток выигрышной линии или null, если победителя нет.
         /// </summary>
-        public Mark GetWinner()
+        public int[]? GetWinningLine()
         {
             foreach (int[] line in WinningLines)
             {
                 Mark first = cells[line[0]];
                 if (first != Mark.None && line.All(i => cells[i] == first))
                 {
-                    return first;
+                    return line;
                 }
             }
 
-            return Mark.None;
+            return null;
+        }
+
+        /// <summary>
+        /// Возвращает победителя или Mark.None, если победителя нет.
+        /// </summary>
+        public Mark GetWinner()
+        {
+            int[]? line = GetWinningLine();
+            return line == null ? Mark.None : cells[line[0]];
         }
 
         /// <summary>

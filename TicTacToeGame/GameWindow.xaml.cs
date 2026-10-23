@@ -1,6 +1,7 @@
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace TicTacToeGame
 {
@@ -70,6 +71,11 @@ namespace TicTacToeGame
                 return;
             }
 
+            if (board.IsFinished())
+            {
+                return;
+            }
+
             if (!board.TryPlace(index, playerMark))
             {
                 return;
@@ -98,7 +104,7 @@ namespace TicTacToeGame
             }
 
             StatusText.Text = GetResultText();
-            SetBoardEnabled(false);
+            HighlightWinningLine();
         }
 
         private string GetResultText()
@@ -121,8 +127,40 @@ namespace TicTacToeGame
         {
             for (int index = 0; index < cells.Length; index++)
             {
-                cells[index].Content = MarkToText(board.GetMark(index));
+                Mark mark = board.GetMark(index);
+                cells[index].Content = MarkToText(mark);
+                cells[index].Foreground = MarkToBrush(mark);
+                cells[index].ClearValue(Button.BackgroundProperty);
             }
+        }
+
+        private void HighlightWinningLine()
+        {
+            int[]? line = board.GetWinningLine();
+            if (line == null)
+            {
+                return;
+            }
+
+            foreach (int index in line)
+            {
+                cells[index].Background = Brushes.Khaki;
+            }
+        }
+
+        private static Brush MarkToBrush(Mark mark)
+        {
+            if (mark == Mark.Cross)
+            {
+                return Brushes.SteelBlue;
+            }
+
+            if (mark == Mark.Zero)
+            {
+                return Brushes.Crimson;
+            }
+
+            return Brushes.Black;
         }
 
         private static string MarkToText(Mark mark)
