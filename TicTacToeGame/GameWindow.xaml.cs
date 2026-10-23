@@ -11,12 +11,13 @@ namespace TicTacToeGame
     public partial class GameWindow : Window
     {
         private const string NewGameButtonText = "Новая игра";
+        private const int FullSearchDepth = 9;
 
         private readonly TicTacToeBoard board = new TicTacToeBoard();
         private readonly Random random = new Random();
         private readonly Button[] cells;
 
-        private ComputerPlayer computer = new ComputerPlayer(Mark.Zero);
+        private ComputerPlayer computer = new ComputerPlayer(Mark.Zero, FullSearchDepth);
         private Mark playerMark;
         private Mark computerMark;
 
@@ -46,6 +47,8 @@ namespace TicTacToeGame
             board.Reset();
             ChooseMarks();
             NewGameButton.Content = NewGameButtonText;
+            DifficultyBox.IsEnabled = false;
+            NewGameButton.IsEnabled = false;
             SetBoardEnabled(true);
 
             if (computerMark == Mark.Cross)
@@ -61,7 +64,17 @@ namespace TicTacToeGame
         {
             playerMark = random.Next(2) == 0 ? Mark.Cross : Mark.Zero;
             computerMark = playerMark == Mark.Cross ? Mark.Zero : Mark.Cross;
-            computer = new ComputerPlayer(computerMark);
+            computer = new ComputerPlayer(computerMark, GetSearchDepth());
+        }
+
+        private int GetSearchDepth()
+        {
+            if (DifficultyBox.SelectedItem is ComboBoxItem item && item.Tag is string tag && int.TryParse(tag, out int depth))
+            {
+                return depth;
+            }
+
+            return FullSearchDepth;
         }
 
         private void CellButton_Click(object sender, RoutedEventArgs e)
@@ -105,6 +118,8 @@ namespace TicTacToeGame
 
             StatusText.Text = GetResultText();
             HighlightWinningLine();
+            DifficultyBox.IsEnabled = true;
+            NewGameButton.IsEnabled = true;
         }
 
         private string GetResultText()
@@ -142,9 +157,10 @@ namespace TicTacToeGame
                 return;
             }
 
+            Brush highlight = board.GetWinner() == playerMark ? Brushes.LightGreen : Brushes.LightCoral;
             foreach (int index in line)
             {
-                cells[index].Background = Brushes.Khaki;
+                cells[index].Background = highlight;
             }
         }
 

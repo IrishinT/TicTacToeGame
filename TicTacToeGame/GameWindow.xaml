@@ -33,13 +33,31 @@
             <Button x:Name="Cell8" FontSize="48" Margin="4" IsEnabled="False" />
         </UniformGrid>
 
-        <Button x:Name="NewGameButton"
-                Grid.Row="2"
-                Margin="0,12,0,0"
-                Padding="12,6"
-                HorizontalAlignment="Center"
-                FontSize="16"
-                Content="Начать игру"
-                Click="NewGameButton_Click" />
+        <StackPanel Grid.Row="2"
+                    Margin="0,12,0,0"
+                    HorizontalAlignment="Center">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Label Content="Уровень:"
+                       Margin="0,0,6,0"
+                       VerticalAlignment="Center"
+                       FontSize="16" />
+                <ComboBox x:Name="DifficultyBox"
+                          Width="160"
+                          VerticalAlignment="Center"
+                          FontSize="16"
+                          SelectedIndex="0">
+                    <ComboBoxItem Content="Лёгкий" Tag="2" />
+                    <ComboBoxItem Content="Средний" Tag="4" />
+                    <ComboBoxItem Content="Невозможный" Tag="9" />
+                </ComboBox>
+            </StackPanel>
+            <Button x:Name="NewGameButton"
+                    Margin="0,12,0,0"
+                    Padding="12,6"
+                    HorizontalAlignment="Center"
+                    FontSize="16"
+                    Content="Начать игру"
+                    Click="NewGameButton_Click" />
+        </StackPanel>
     </Grid>
 </Window>

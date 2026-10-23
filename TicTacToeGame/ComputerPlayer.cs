@@ -3,16 +3,18 @@ using System;
 namespace TicTacToeGame
 {
     /// <summary>
-    /// Компьютер-соперник: выбирает лучший ход перебором всех вариантов (минимакс).
+    /// Компьютер-соперник: выбирает ход перебором вариантов (минимакс) на заданную глубину.
     /// </summary>
     public class ComputerPlayer
     {
         private readonly Mark mark;
         private readonly Mark opponentMark;
+        private readonly int searchDepth;
 
-        public ComputerPlayer(Mark mark)
+        public ComputerPlayer(Mark mark, int searchDepth)
         {
             this.mark = mark;
+            this.searchDepth = searchDepth;
             opponentMark = mark == Mark.Cross ? Mark.Zero : Mark.Cross;
         }
 
@@ -28,7 +30,7 @@ namespace TicTacToeGame
             {
                 TicTacToeBoard next = board.Clone();
                 next.TryPlace(move, mark);
-                int score = Minimax(next, opponentMark);
+                int score = Minimax(next, opponentMark, searchDepth - 1);
 
                 if (score > bestScore)
                 {
@@ -40,11 +42,16 @@ namespace TicTacToeGame
             return bestMove;
         }
 
-        private int Minimax(TicTacToeBoard board, Mark turn)
+        private int Minimax(TicTacToeBoard board, Mark turn, int depthLeft)
         {
             if (board.IsFinished())
             {
                 return ScoreFinished(board);
+            }
+
+            if (depthLeft == 0)
+            {
+                return 0;
             }
 
             bool isOurTurn = turn == mark;
@@ -54,7 +61,7 @@ namespace TicTacToeGame
             {
                 TicTacToeBoard next = board.Clone();
                 next.TryPlace(move, turn);
-                int score = Minimax(next, isOurTurn ? opponentMark : mark);
+                int score = Minimax(next, isOurTurn ? opponentMark : mark, depthLeft - 1);
 
                 if (isOurTurn)
                 {
