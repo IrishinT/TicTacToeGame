@@ -1,23 +1,19 @@
-using System.Linq;
+using System;
 
 namespace TicTacToeGame
 {
     /// <summary>
-    /// Компьютер-соперник: выбирает ход по простым правилам.
+    /// Компьютер-соперник: выбирает лучший ход перебором всех вариантов (минимакс).
     /// </summary>
     public class ComputerPlayer
     {
-        private const int NoMove = -1;
-        private const int CenterCell = 4;
-        private static readonly int[] CornerCells = { 0, 2, 6, 8 };
-
         private readonly Mark mark;
         private readonly Mark opponentMark;
 
         public ComputerPlayer(Mark mark)
         {
             this.mark = mark;
-            opponentMark = mark == Mark.Cross ? Mark.Nought : Mark.Cross;
+            opponentMark = mark == Mark.Cross ? Mark.Zero : Mark.Cross;
         }
 
         /// <summary>
@@ -25,50 +21,68 @@ namespace TicTacToeGame
         /// </summary>
         public int ChooseMove(TicTacToeBoard board)
         {
-            int move = FindWinningMove(board, mark);
-            if (move != NoMove)
-            {
-                return move;
-            }
+            int bestMove = -1;
+            int bestScore = int.MinValue;
 
-            move = FindWinningMove(board, opponentMark);
-            if (move != NoMove)
+            foreach (int move in board.GetEmptyCells())
             {
-                return move;
-            }
+                TicTacToeBoard next = board.Clone();
+                next.TryPlace(move, mark);
+                int score = Minimax(next, opponentMark);
 
-            return FindPreferredFreeCell(board);
-        }
-
-        private static int FindWinningMove(TicTacToeBoard board, Mark markToWin)
-        {
-            foreach (int index in board.EmptyCells)
-            {
-                TicTacToeBoard copy = board.Clone();
-                copy.TryPlace(index, markToWin);
-                if (copy.GetWinner() == markToWin)
+                if (score > bestScore)
                 {
-                    return index;
+                    bestScore = score;
+                    bestMove = move;
                 }
             }
 
-            return NoMove;
+            return bestMove;
         }
 
-        private int FindPreferredFreeCell(TicTacToeBoard board)
+        private int Minimax(TicTacToeBoard board, Mark turn)
         {
-            if (board.EmptyCells.Contains(CenterCell))
+            if (board.IsFinished())
             {
-                return CenterCell;
+                return ScoreFinished(board);
             }
 
-            int corner = CornerCells.FirstOrDefault(c => board.EmptyCells.Contains(c), NoMove);
-            if (corner != NoMove)
+            bool isOurTurn = turn == mark;
+            int best = isOurTurn ? int.MinValue : int.MaxValue;
+
+            foreach (int move in board.GetEmptyCells())
             {
-                return corner;
+                TicTacToeBoard next = board.Clone();
+                next.TryPlace(move, turn);
+                int score = Minimax(next, isOurTurn ? opponentMark : mark);
+
+                if (isOurTurn)
+                {
+                    best = Math.Max(best, score);
+                }
+                else
+                {
+                    best = Math.Min(best, score);
+                }
             }
 
-            return board.EmptyCells.First();
+            return best;
+        }
+
+        private int ScoreFinished(TicTacToeBoard board)
+        {
+            Mark winner = board.GetWinner();
+            if (winner == mark)
+            {
+                return 1;
+            }
+
+            if (winner == opponentMark)
+            {
+                return -1;
+            }
+
+            return 0;
         }
     }
 }

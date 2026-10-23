@@ -1,3 +1,4 @@
+using System;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -11,8 +12,12 @@ namespace TicTacToeGame
         private const string NewGameButtonText = "Новая игра";
 
         private readonly TicTacToeBoard board = new TicTacToeBoard();
-        private readonly ComputerPlayer computer = new ComputerPlayer(Mark.Nought);
-        private Button[] cells;
+        private readonly Random random = new Random();
+        private readonly Button[] cells;
+
+        private ComputerPlayer computer = new ComputerPlayer(Mark.Zero);
+        private Mark playerMark;
+        private Mark computerMark;
 
         public GameWindow()
         {
@@ -38,10 +43,24 @@ namespace TicTacToeGame
         private void StartNewGame()
         {
             board.Reset();
+            ChooseMarks();
             NewGameButton.Content = NewGameButtonText;
             SetBoardEnabled(true);
+
+            if (computerMark == Mark.Cross)
+            {
+                MakeComputerMove();
+            }
+
             RefreshBoard();
-            StatusText.Text = "Ваш ход";
+            ShowTurnResult();
+        }
+
+        private void ChooseMarks()
+        {
+            playerMark = random.Next(2) == 0 ? Mark.Cross : Mark.Zero;
+            computerMark = playerMark == Mark.Cross ? Mark.Zero : Mark.Cross;
+            computer = new ComputerPlayer(computerMark);
         }
 
         private void CellButton_Click(object sender, RoutedEventArgs e)
@@ -51,25 +70,30 @@ namespace TicTacToeGame
                 return;
             }
 
-            if (!board.TryPlace(index, Mark.Cross))
+            if (!board.TryPlace(index, playerMark))
             {
                 return;
             }
 
             if (!board.IsFinished())
             {
-                board.TryPlace(computer.ChooseMove(board), Mark.Nought);
+                MakeComputerMove();
             }
 
             RefreshBoard();
             ShowTurnResult();
         }
 
+        private void MakeComputerMove()
+        {
+            board.TryPlace(computer.ChooseMove(board), computerMark);
+        }
+
         private void ShowTurnResult()
         {
             if (!board.IsFinished())
             {
-                StatusText.Text = "Ваш ход";
+                StatusText.Text = $"Вы - \"{MarkToText(playerMark)}\". Ваш ход";
                 return;
             }
 
@@ -80,14 +104,14 @@ namespace TicTacToeGame
         private string GetResultText()
         {
             Mark winner = board.GetWinner();
-            if (winner == Mark.Cross)
+            if (winner == playerMark)
             {
                 return "Вы победили";
             }
 
-            if (winner == Mark.Nought)
+            if (winner == computerMark)
             {
-                return "Победил компьютер";
+                return "Победил робот";
             }
 
             return "Ничья";
@@ -97,7 +121,7 @@ namespace TicTacToeGame
         {
             for (int index = 0; index < cells.Length; index++)
             {
-                cells[index].Content = MarkToText(board[index]);
+                cells[index].Content = MarkToText(board.GetMark(index));
             }
         }
 
@@ -105,10 +129,10 @@ namespace TicTacToeGame
         {
             if (mark == Mark.Cross)
             {
-                return "X";
+                return "Х";
             }
 
-            if (mark == Mark.Nought)
+            if (mark == Mark.Zero)
             {
                 return "O";
             }

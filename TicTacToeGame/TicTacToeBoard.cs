@@ -13,9 +13,9 @@ namespace TicTacToeGame
 
         private static readonly int[][] WinningLines =
         {
-            new[] { 0, 1, 2 }, new[] { 3, 4, 5 }, new[] { 6, 7, 8 },
-            new[] { 0, 3, 6 }, new[] { 1, 4, 7 }, new[] { 2, 5, 8 },
-            new[] { 0, 4, 8 }, new[] { 2, 4, 6 }
+            [ 0, 1, 2 ], [ 3, 4, 5 ], [ 6, 7, 8 ],
+            [0, 3, 6], [1, 4, 7], [2, 5, 8],
+            [0, 4, 8], [2, 4, 6]
         };
 
         private readonly Mark[] cells = new Mark[Size * Size];
@@ -23,12 +23,27 @@ namespace TicTacToeGame
         /// <summary>
         /// Возвращает метку в клетке с указанным индексом (0..8).
         /// </summary>
-        public Mark this[int index] => cells[index];
+        public Mark GetMark(int index)
+        {
+            return cells[index];
+        }
 
         /// <summary>
-        /// Индексы свободных клеток.
+        /// Возвращает индексы свободных клеток.
         /// </summary>
-        public IEnumerable<int> EmptyCells => Enumerable.Range(0, cells.Length).Where(IsEmpty);
+        public List<int> GetEmptyCells()
+        {
+            var empty = new List<int>();
+            for (int index = 0; index < Size * Size; index++)
+            {
+                if (IsEmpty(index))
+                {
+                    empty.Add(index);
+                }
+            }
+
+            return empty;
+        }
 
         /// <summary>
         /// Ставит метку в клетку. Возвращает false, если ход недопустим.
@@ -64,12 +79,18 @@ namespace TicTacToeGame
         /// <summary>
         /// Ничья: все клетки заняты, а победителя нет.
         /// </summary>
-        public bool IsDraw() => GetWinner() == Mark.None && !EmptyCells.Any();
+        public bool IsDraw()
+        {
+            return GetWinner() == Mark.None && GetEmptyCells().Count == 0;
+        }
 
         /// <summary>
         /// Игра окончена, если есть победитель или ничья.
         /// </summary>
-        public bool IsFinished() => GetWinner() != Mark.None || IsDraw();
+        public bool IsFinished()
+        {
+            return GetWinner() != Mark.None || IsDraw();
+        }
 
         /// <summary>
         /// Создаёт копию поля, чтобы проверять ходы без изменения настоящего поля.
@@ -89,9 +110,15 @@ namespace TicTacToeGame
             Array.Fill(cells, Mark.None);
         }
 
-        private bool IsEmpty(int index) => cells[index] == Mark.None;
+        private bool IsEmpty(int index)
+        {
+            return cells[index] == Mark.None;
+        }
 
-        private static bool IsValidIndex(int index) => index >= 0 && index < Size * Size;
+        private static bool IsValidIndex(int index)
+        {
+            return index >= 0 && index < Size * Size;
+        }
     }
 
     /// <summary>
@@ -101,6 +128,6 @@ namespace TicTacToeGame
     {
         None,
         Cross,
-        Nought
+        Zero
     }
 }

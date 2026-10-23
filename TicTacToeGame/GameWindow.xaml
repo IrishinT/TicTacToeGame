@@ -19,7 +19,7 @@
                    Margin="0,0,0,12"
                    HorizontalAlignment="Center"
                    FontSize="18"
-                   Text="Нажмите «Начать игру»" />
+                   Text="Нажмите ''Начать игру''" />
 
         <UniformGrid x:Name="BoardGrid" Grid.Row="1" Rows="3" Columns="3">
             <Button x:Name="Cell0" FontSize="48" Margin="4" IsEnabled="False" />
